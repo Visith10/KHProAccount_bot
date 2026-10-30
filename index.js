@@ -74,7 +74,25 @@ function loadData() {
   }
 }
 
+function formatUrl(url) {
+  if (!url) return '';
+  url = url.trim();
+  if (url.startsWith('@')) {
+    return `https://t.me/${url.substring(1)}`;
+  }
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 function saveConfig(newConfig) {
+  if (newConfig.buttons && Array.isArray(newConfig.buttons)) {
+    newConfig.buttons = newConfig.buttons.map(b => ({
+      text: b.text ? b.text.trim() : '',
+      url: formatUrl(b.url)
+    }));
+  }
   config = { ...config, ...newConfig };
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
 }
@@ -117,12 +135,26 @@ async function callTelegram(method, params = {}) {
 
 async function sendMessage(chatId, text, extraParams = {}) {
   try {
-    return await callTelegram('sendMessage', {
+    const res = await callTelegram('sendMessage', {
       chat_id: chatId,
       text: text,
       parse_mode: 'HTML',
       ...extraParams
     });
+
+    if (!res.ok) {
+      console.error(`❌ Telegram API Error (${chatId}):`, res.description);
+      // Fallback: If it failed due to buttons or html parsing, try sending as plain text without buttons
+      if (extraParams.reply_markup || extraParams.parse_mode) {
+        console.log(`🔄 កំពុងសាកល្បងផ្ញើឡើងវិញដោយគ្មាន Markup សម្រាប់ chatId ${chatId}...`);
+        const fallbackRes = await callTelegram('sendMessage', {
+          chat_id: chatId,
+          text: text.replace(/<[^>]*>/g, ''), // strip HTML tags
+        });
+        return fallbackRes;
+      }
+    }
+    return res;
   } catch (error) {
     console.error(`Error sending message to ${chatId}:`, error.message);
   }
@@ -176,10 +208,19 @@ async function startBotPolling() {
               // Build inline keyboard if buttons exist
               const replyMarkup = {};
               if (Array.isArray(config.buttons) && config.buttons.length > 0) {
-                replyMarkup.inline_keyboard = config.buttons.map(b => ([{
-                  text: b.text,
-                  url: b.url
-                }]));
+                const validButtons = config.buttons
+                  .map(b => ({
+                    text: b.text,
+                    url: formatUrl(b.url)
+                  }))
+                  .filter(b => b.text && b.url && (b.url.startsWith('http://') || b.url.startsWith('https://')));
+
+                if (validButtons.length > 0) {
+                  replyMarkup.inline_keyboard = validButtons.map(b => ([{
+                    text: b.text,
+                    url: b.url
+                  }]));
+                }
               }
 
               const params = {};

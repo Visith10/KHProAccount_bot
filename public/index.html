@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KHProAccount - Bot Admin Dashboard</title>
+  <!-- Google Fonts: Kantumruy Pro & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kantumruy+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Kantumruy Pro"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Kantumruy Pro', 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <!-- Top Navbar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/25">
+          KH
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-white leading-tight">KHProAccount Bot</h1>
+          <p class="text-xs text-slate-400">ផ្ទាំងគ្រប់គ្រង Admin (Admin Control Panel)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span id="bot-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          កំពុងដំណើរការ (Online)
+        </span>
+        <a id="bot-telegram-link" href="https://t.me/KHProAccount_bot" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4 text-sky-400 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.944z"/></svg>
+          បើក Bot Telegram
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+      <div class="bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-text">បានរក្សាទុកដោយជោគជ័យ!</span>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+          <span>ស្ថានភាព BOT</span>
+          <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+        </div>
+        <div class="text-xl font-bold text-white" id="stat-bot-name">Learnai.bot</div>
+        <div class="text-xs text-slate-400 mt-1" id="stat-bot-username">@KHProAccount_bot</div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+          <span>អ្នកប្រើប្រាស់សរុប (USERS)</span>
+          <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+        </div>
+        <div class="text-2xl font-bold text-white" id="stat-user-count">0</div>
+        <div class="text-xs text-slate-400 mt-1">អ្នកបានចុច /start</div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+          <span>សារសរុប (TOTAL MESSAGES)</span>
+          <div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+        </div>
+        <div class="text-2xl font-bold text-white" id="stat-msg-count">0</div>
+        <div class="text-xs text-slate-400 mt-1">សារបានដំណើរការ</div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-2">
+          <span>ឆ្លើយតបស្វ័យប្រវត្តិ (AUTO REPLY)</span>
+          <div class="p-2 bg-amber-500/10 text-amber-400 rounded-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 mt-1">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="switch-bot-active" class="sr-only peer" checked>
+            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            <span class="ml-2 text-sm font-semibold text-slate-300" id="bot-active-label">បើក (Active)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left Column: Settings Form -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Welcome Message Box -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span>💬 កែប្រែសារ Welcome (ពេលចុច /start)</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">សារនេះនឹងផ្ញើទៅកាន់អ្នកប្រើប្រាស់ភ្លាមៗពេលពួកគេចុចប៊ូតុង Start</p>
+            </div>
+            <button onclick="saveConfig()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-xl text-sm transition shadow-lg shadow-blue-600/30 flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+              រក្សាទុក (Save)
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-semibold text-slate-300">អត្ថបទសារ Welcome:</label>
+                <span class="text-xs text-slate-400">ប្រើ <code class="text-sky-400">{firstName}</code> សម្រាប់ឈ្មោះអ្នកប្រើ</span>
+              </div>
+              <textarea id="welcome-msg-input" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3.5 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition leading-relaxed"></textarea>
+              <p class="text-xs text-slate-500 mt-1">គាំទ្រទម្រង់ Telegram HTML ដូចជា: &lt;b&gt;អក្សរដិត&lt;/b&gt;, &lt;i&gt;អក្សរទ្រេត&lt;/i&gt;, &lt;code&gt;កូដ&lt;/code&gt;</p>
+            </div>
+
+            <!-- Default Reply Box -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">សារឆ្លើយតបពេល User ផ្ញើសារធម្មតា (Default Reply):</label>
+              <textarea id="default-reply-input" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-100 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"></textarea>
+            </div>
+
+            <!-- Inline Buttons Config -->
+            <div class="border-t border-slate-700/80 pt-4">
+              <div class="flex justify-between items-center mb-3">
+                <label class="text-xs font-semibold text-slate-300">ប៊ូតុងភ្ជាប់មកជាមួយសារ Welcome (Inline Buttons):</label>
+                <button type="button" onclick="addButtonRow()" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                  + បន្ថែមប៊ូតុង
+                </button>
+              </div>
+              <div id="buttons-container" class="space-y-2">
+                <!-- Dynamic Button rows -->
+              </div>
+            </div>
+
+            <div class="pt-2 flex justify-end">
+              <button onclick="saveConfig()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                រក្សាទុកការកែប្រែទាំងអស់ (Save Changes)
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Broadcast & Message Logs -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Broadcast Message to Users -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-sm">
+          <h2 class="text-base font-bold text-white flex items-center gap-2 mb-2">
+            <span>📢 ផ្ញើសារជូនដំណឹងទៅកាន់សមាជិក (Broadcast Message)</span>
+          </h2>
+          <p class="text-xs text-slate-400 mb-4">អ្នកអាចផ្ញើសារផ្សព្វផ្សាយទៅកាន់អ្នកប្រើប្រាស់ទាំងអស់ដែលបានចុច Bot កន្លងមក</p>
+          
+          <div class="space-y-3">
+            <textarea id="broadcast-msg-input" rows="3" placeholder="វាយសារដែលចង់ផ្សព្វផ្សាយនៅទីនេះ..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-100 text-sm focus:outline-none focus:border-blue-500"></textarea>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400" id="broadcast-target-text">ផ្ញើទៅកាន់: 0 នាក់</span>
+              <button onclick="sendBroadcast()" id="btn-broadcast" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                ផ្ញើឥឡូវនេះ (Send Broadcast)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-time Activity Logs -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>📋 កំណត់ហេតុសារ (Message Logs)</span>
+            </h2>
+            <button onclick="fetchLogs()" class="text-xs text-slate-400 hover:text-white transition">
+              🔄 ធ្វើបច្ចុប្បន្នភាព
+            </button>
+          </div>
+          
+          <div id="logs-list" class="space-y-2 max-h-[320px] overflow-y-auto pr-1 text-xs">
+            <div class="text-center py-6 text-slate-500">មិនទាន់មានសារនៅឡើយទេ...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let currentConfig = {
+      welcomeMessage: '',
+      defaultReply: '',
+      botActive: true,
+      buttons: []
+    };
+
+    // Load initial data
+    async function loadData() {
+      try {
+        const [statusRes, configRes, logsRes] = await Promise.all([
+          fetch('/api/status'),
+          fetch('/api/config'),
+          fetch('/api/logs')
+        ]);
+
+        const status = await statusRes.json();
+        const config = await configRes.json();
+        const logs = await logsRes.json();
+
+        currentConfig = config;
+
+        // Populate Status
+        if (status.bot) {
+          document.getElementById('stat-bot-name').innerText = status.bot.first_name || 'Learnai.bot';
+          document.getElementById('stat-bot-username').innerText = '@' + (status.bot.username || 'KHProAccount_bot');
+          document.getElementById('bot-telegram-link').href = 'https://t.me/' + status.bot.username;
+        }
+        document.getElementById('stat-user-count').innerText = status.usersCount || 0;
+        document.getElementById('stat-msg-count').innerText = status.messagesCount || 0;
+        document.getElementById('broadcast-target-text').innerText = `ផ្ញើទៅកាន់: ${status.usersCount || 0} នាក់`;
+
+        // Populate Config Form
+        document.getElementById('welcome-msg-input').value = config.welcomeMessage || '';
+        document.getElementById('default-reply-input').value = config.defaultReply || '';
+        document.getElementById('switch-bot-active').checked = config.botActive !== false;
+        updateActiveLabel(config.botActive !== false);
+
+        renderButtonsList(config.buttons || []);
+        renderLogs(logs);
+
+      } catch (err) {
+        console.error('Error loading data:', err);
+      }
+    }
+
+    document.getElementById('switch-bot-active').addEventListener('change', (e) => {
+      updateActiveLabel(e.target.checked);
+      currentConfig.botActive = e.target.checked;
+      saveConfig(false);
+    });
+
+    function updateActiveLabel(active) {
+      const lbl = document.getElementById('bot-active-label');
+      lbl.innerText = active ? 'បើក (Active)' : 'បិទ (Paused)';
+      lbl.className = active ? 'ml-2 text-sm font-semibold text-emerald-400' : 'ml-2 text-sm font-semibold text-slate-400';
+    }
+
+    function renderButtonsList(buttons) {
+      const container = document.getElementById('buttons-container');
+      container.innerHTML = '';
+      buttons.forEach((b, index) => {
+        addButtonRow(b.text, b.url);
+      });
+    }
+
+    function addButtonRow(text = '', url = '') {
+      const container = document.getElementById('buttons-container');
+      const row = document.createElement('div');
+      row.className = 'button-row flex items-center gap-2';
+      row.innerHTML = `
+        <input type="text" placeholder="ឈ្មោះប៊ូតុង (Button Label)" value="${text}" class="btn-text w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+        <input type="text" placeholder="តំណភ្ជាប់ (URL e.g. https://...)" value="${url}" class="btn-url w-1/2 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+        <button type="button" onclick="this.parentElement.remove();" class="p-1.5 text-rose-400 hover:text-rose-300 rounded-lg hover:bg-slate-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      `;
+      container.appendChild(row);
+    }
+
+    async function saveConfig(showToastNotice = true) {
+      const welcome = document.getElementById('welcome-msg-input').value;
+      const defaultReply = document.getElementById('default-reply-input').value;
+      const botActive = document.getElementById('switch-bot-active').checked;
+
+      const buttons = [];
+      document.querySelectorAll('.button-row').forEach(row => {
+        const text = row.querySelector('.btn-text').value.trim();
+        const url = row.querySelector('.btn-url').value.trim();
+        if (text && url) {
+          buttons.push({ text, url });
+        }
+      });
+
+      const payload = {
+        welcomeMessage: welcome,
+        defaultReply: defaultReply,
+        botActive: botActive,
+        buttons: buttons
+      };
+
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.ok && showToastNotice) {
+          showToast('បានរក្សាទុកការកែប្រែដោយជោគជ័យ!');
+        }
+      } catch (err) {
+        alert('បរាជ័យក្នុងការរក្សាទុក៖ ' + err.message);
+      }
+    }
+
+    async function sendBroadcast() {
+      const msg = document.getElementById('broadcast-msg-input').value.trim();
+      if (!msg) {
+        alert('សូមវាយសារដែលចង់ផ្ញើ!');
+        return;
+      }
+      if (!confirm('តើអ្នកពិតជាចង់ផ្ញើសារនេះទៅកាន់អ្នកប្រើទាំងអស់មែនទេ?')) return;
+
+      const btn = document.getElementById('btn-broadcast');
+      btn.disabled = true;
+      btn.innerText = 'កំពុងផ្ញើ...';
+
+      try {
+        const res = await fetch('/api/broadcast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const result = await res.json();
+        showToast(`បានផ្ញើទៅកាន់ ${result.sentCount || 0} នាក់!`);
+        document.getElementById('broadcast-msg-input').value = '';
+      } catch (err) {
+        alert('កំហុសពេលផ្ញើ៖ ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> ផ្ញើឥឡូវនេះ (Send Broadcast)`;
+      }
+    }
+
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        const logs = await res.json();
+        renderLogs(logs);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderLogs(logs) {
+      const list = document.getElementById('logs-list');
+      if (!logs || logs.length === 0) {
+        list.innerHTML = '<div class="text-center py-6 text-slate-500">មិនទាន់មានសារនៅឡើយទេ...</div>';
+        return;
+      }
+      list.innerHTML = logs.slice().reverse().map(l => `
+        <div class="bg-slate-900/90 border border-slate-700/60 rounded-xl p-3">
+          <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
+            <span class="font-semibold text-sky-400">${l.from || 'User'} (ID: ${l.chatId})</span>
+            <span>${l.time || ''}</span>
+          </div>
+          <div class="text-white text-xs font-mono bg-slate-950/60 p-1.5 rounded">${escapeHtml(l.text || '')}</div>
+          <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+            <span>↳ Bot:</span>
+            <span class="truncate text-slate-300">${escapeHtml(l.reply || '')}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    // Initial load
+    loadData();
+    // Poll logs every 5 seconds
+    setInterval(fetchLogs, 5000);
+  </script>
+</body>
+</html>

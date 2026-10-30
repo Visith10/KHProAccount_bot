@@ -1,0 +1,15 @@
+{
+  "welcomeMessage": "👋 <b>សួស្តី {firstName}!</b>\n\n🎉 <b>Welcome to KHProAccount Bot!</b>\nសូមស្វាគមន៍មកកាន់ប្រព័ន្ធរបស់យើងខ្ញុំ! ✨\n\nយើងខ្ញុំរីករាយក្នុងការផ្តល់សេវាកម្មជូនលោកអ្នក។",
+  "defaultReply": "សូមអរគុណ <b>{firstName}</b> សម្រាប់ការផ្ញើសារ! ប្រសិនបើចង់ចាប់ផ្តើមឡើងវិញ សូមចុច /start",
+  "botActive": true,
+  "buttons": [
+    {
+      "text": "🌐 ចូលទៅកាន់គេហទំព័រ",
+      "url": "https://telegram.org"
+    },
+    {
+      "text": "💬 ទំនាក់ទំនង Admin",
+      "url": "https://t.me/KHProAccount_bot"
+    }
+  ]
+}

@@ -375,7 +375,7 @@ function findAvailablePort(startPort) {
 // Start Server and Bot cleanly
 const initialPort = parseInt(process.env.PORT, 10) || 3000;
 findAvailablePort(initialPort).then((availablePort) => {
-  server.listen(availablePort, () => {
+  server.listen(availablePort, '0.0.0.0', () => {
     console.log(`🌐 Admin Web UI កំពុងដំណើរការនៅ: http://localhost:${availablePort}`);
     console.log(`👉 បើក Browser ហើយចូលទៅកាន់: http://localhost:${availablePort}`);
     startBotPolling();
